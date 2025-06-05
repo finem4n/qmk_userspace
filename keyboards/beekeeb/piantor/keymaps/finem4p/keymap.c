@@ -29,17 +29,57 @@ enum layer {
 
 enum custom_keycodes {
     REDO = SAFE_RANGE,
+    LPAR_HMR,
+    RPAR_HMR,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    static uint16_t lpar_hmr_timer;
+    static uint16_t rpar_hmr_timer;
+
     switch (keycode) {
-    case REDO:
-        if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_Z)SS_UP(X_LSFT)SS_UP(X_LCTL));
-        } else {
+        case REDO:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_Z)SS_UP(X_LSFT)SS_UP(X_LCTL));
+            } else {
+            }
+            return false;
         }
-        break;
-    }
+
+        case LPAR_HMR:
+        // Source: https://thomasbaart.nl/2018/12/09/qmk-basics-tap-and-hold-actions/
+            if(record->event.pressed) {
+                lpar_hmr_timer = timer_read();
+                register_code(KC_LSFT);
+
+            }
+            else {
+                if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
+                    tap_code(KC_9);
+                    unregister_code(KC_LSFT);
+                }
+                else {
+                    unregister_code(KC_LSFT);
+                }
+            }
+            return false;
+        }
+
+        case RPAR_HMR:
+            if(record->event.pressed) {
+                rpar_hmr_timer = timer_read();
+                register_code(KC_LALT);
+
+            }
+            else {
+                unregister_code(KC_LALT);
+
+                if (timer_elapsed(rpar_hmr_timer) < TAPPING_TERM) {
+                    tap_code16(S(KC_0));
+                }
+            }
+            return false;
+        }
     return true;
 };
 
@@ -60,8 +100,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_NUM] = LAYOUT_split_3x6_3(
+        // add here hmr
+        // add here caps lock maybe
+        // also caps word???
         KC_GRV,     KC_1,   KC_2,   KC_3,       KC_4,       KC_5,                           KC_6,   KC_7,       KC_8,       KC_9,   KC_0,   KC_NO,
-        KC_LALT,    S(KC_9),  S(KC_0),  KC_MINS,    KC_EQL,     KC_NO,                          KC_NO,  KC_LBRC,    KC_RBRC,    KC_NO,  KC_F10, KC_F11,
+        KC_NO,    LPAR_HMR,  RPAR_HMR,  KC_MINS,    KC_EQL,     KC_NO,                          KC_NO,  KC_LBRC,    KC_RBRC,    KC_NO,  KC_F10, KC_F11,
         KC_LSFT,    KC_F1,  KC_F2,  KC_F3,      KC_F4,      KC_F5,                          KC_F6,  KC_F7,      KC_F8,      KC_F9,  KC_F12, KC_RSFT,
                                         KC_LGUI,    CW_TOGG,    KC_LCTL,        KC_NO,  KC_NO,   KC_TRNS
     ),
