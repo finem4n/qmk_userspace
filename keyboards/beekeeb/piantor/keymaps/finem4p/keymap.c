@@ -49,16 +49,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Source: https://thomasbaart.nl/2018/12/09/qmk-basics-tap-and-hold-actions/
             if(record->event.pressed) {
                 lpar_hmr_timer = timer_read();
-                register_code(KC_LSFT);
+                // register_code(KC_LSFT);
+                register_code(KC_LGUI);
 
             }
             else {
                 if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
                     tap_code(KC_9);
-                    unregister_code(KC_LSFT);
+                    // unregister_code(KC_LSFT);
+                unregister_code(KC_LGUI);
                 }
                 else {
-                    unregister_code(KC_LSFT);
+                    // unregister_code(KC_LSFT);
+                unregister_code(KC_LGUI);
                 }
             }
             return false;
@@ -76,7 +79,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code16(S(KC_0));
                 }
             }
-            return false;
+        return false;
     }
     return true;
 };
