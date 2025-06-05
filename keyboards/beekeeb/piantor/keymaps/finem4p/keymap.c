@@ -57,25 +57,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
                     tap_code(KC_9);
                     // unregister_code(KC_LSFT);
-                unregister_code(KC_LGUI);
                 }
-                else {
-                    // unregister_code(KC_LSFT);
                 unregister_code(KC_LGUI);
-                }
             }
             return false;
 
         case RPAR_HMR:
             if(record->event.pressed) {
                 rpar_hmr_timer = timer_read();
+                register_code(KC_LGUI);
             }
             else {
+                unregister_code(KC_LGUI);
                 if (timer_elapsed(rpar_hmr_timer) < TAPPING_TERM) {
                     tap_code16(S(KC_0));
-                }
-                else {
-                    register_code(KC_LGUI);
                 }
             }
             return false;
