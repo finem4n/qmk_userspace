@@ -44,7 +44,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
             }
             return false;
-        }
 
         case LPAR_HMR:
         // Source: https://thomasbaart.nl/2018/12/09/qmk-basics-tap-and-hold-actions/
@@ -63,7 +62,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        }
 
         case RPAR_HMR:
             if(record->event.pressed) {
@@ -79,7 +77,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;
-        }
+    }
     return true;
 };
 
