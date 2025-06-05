@@ -69,7 +69,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case RPAR_HMR:
             if(record->event.pressed) {
                 rpar_hmr_timer = timer_read();
-
             }
             else {
                 if (timer_elapsed(rpar_hmr_timer) < TAPPING_TERM) {
@@ -77,7 +76,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 else {
                     register_code(KC_LGUI);
-                    unregister_code(KC_LGUI);
                 }
             }
             return false;
@@ -94,7 +92,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*                    KC_NO, KC_NO, KC_NO,        KC_NO, KC_NO, KC_NO*/
     /*),*/
 
-    // TODO zamien miejscami alt i shift
+    // TODO zamien miejscami alt i shift;
     [_BASE] = LAYOUT_split_3x6_3(
         KC_ESC, KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                       KC_Y,   KC_U,   KC_I,       KC_O,    KC_P,      KC_BSLS,
         KC_TAB, LSFT_T(KC_A),   LALT_T(KC_S),   LCTL_T(KC_D),   LGUI_T(KC_F),   KC_G,   KC_H,   RGUI_T(KC_J),   RCTL_T(KC_K),   LALT_T(KC_L), RSFT_T(KC_SCLN),   KC_QUOT,
