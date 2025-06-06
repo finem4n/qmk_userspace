@@ -77,7 +77,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case MEH_CLEAR:
             if (record->event.pressed) {
-                layer_clear();
+                layer_move(_BASE);
             } else {
             }
             return false;
@@ -126,7 +126,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,     KC_NO,  KC_NO,      C(KC_RGHT), KC_NO,  REDO,                       C(KC_C),    C(KC_Z),    KC_NO,      KC_NO,      C(KC_V),    KC_NO,
         KC_LALT,    KC_NO,  KC_NO,      KC_DEL,     KC_NO,  KC_NO,                      KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    KC_NO,      KC_RALT,
         KC_LSFT,    KC_NO,  C(KC_X),    KC_NO,      KC_NO,  C(KC_LEFT),                 KC_HOME,    KC_PGDN,    KC_PGUP,    KC_END,     C(KC_F),    KC_RSFT,
-                                            MEH_CLEAR,    KC_SPC,     KC_LCTL,        KC_NO,  KC_TRNS,    KC_NO
+                                            MEH_CLEAR,    KC_SPC,     KC_LCTL,          KC_TRNS, KC_NO,   KC_NO
     ),
 
 
