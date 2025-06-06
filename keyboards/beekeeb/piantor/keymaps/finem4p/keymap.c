@@ -32,6 +32,7 @@ enum custom_keycodes {
     REDO = SAFE_RANGE,
     LPAR_HMR,
     RPAR_HMR,
+    MEH_CLEAR,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
