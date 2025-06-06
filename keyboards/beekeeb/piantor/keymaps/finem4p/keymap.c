@@ -9,6 +9,7 @@ enum layer {
     _NUM,
     _VIM,
     _MEDIA,
+    _MOUSE,
     _GAME,
     _GAME_NUM,
     _FG,
@@ -49,31 +50,37 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         // Source: https://thomasbaart.nl/2018/12/09/qmk-basics-tap-and-hold-actions/
             if(record->event.pressed) {
                 lpar_hmr_timer = timer_read();
-                // register_code(KC_LSFT);
-                register_code(KC_LGUI);
+                register_code(KC_RSFT);
 
             }
             else {
                 if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
                     tap_code(KC_9);
-                    // unregister_code(KC_LSFT);
                 }
-                unregister_code(KC_LGUI);
+                unregister_code(KC_RSFT);
             }
             return false;
 
         case RPAR_HMR:
             if(record->event.pressed) {
                 rpar_hmr_timer = timer_read();
-                register_code(KC_LGUI);
+                register_code(KC_LALT);
             }
             else {
-                unregister_code(KC_LGUI);
+                unregister_code(KC_LALT);
                 if (timer_elapsed(rpar_hmr_timer) < TAPPING_TERM) {
                     tap_code16(S(KC_0));
                 }
             }
             return false;
+
+        case MEH_CLEAR:
+            if (record->event.pressed) {
+                layer_clear();
+            } else {
+            }
+            return false;
+
     }
     return true;
 };
@@ -87,38 +94,59 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*                    KC_NO, KC_NO, KC_NO,        KC_NO, KC_NO, KC_NO*/
     /*),*/
 
-    // TODO zamien miejscami alt i shift;
+    // TODO should i do double tap to get to vim layer???
     [_BASE] = LAYOUT_split_3x6_3(
-        KC_ESC, KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                       KC_Y,   KC_U,   KC_I,       KC_O,    KC_P,      KC_BSLS,
-        KC_TAB, LSFT_T(KC_A),   LALT_T(KC_S),   LCTL_T(KC_D),   LGUI_T(KC_F),   KC_G,   KC_H,   RGUI_T(KC_J),   RCTL_T(KC_K),   LALT_T(KC_L), RSFT_T(KC_SCLN),   KC_QUOT,
-        KC_LSFT,KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,                       KC_N,   KC_M,   KC_COMM,    KC_DOT,  KC_SLSH,   KC_RSFT,
-                                   KC_LGUI, LT(_MEDIA, KC_SPC), KC_LCTL,                RALT_T(KC_BSPC),  LT(_VIM, KC_ENT),   MO(_NUM)
+        KC_ESC,             KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,       KC_Y, KC_U,         KC_I,         KC_O,         KC_P,            KC_BSLS,
+        KC_TAB,             LALT_T(KC_A), LSFT_T(KC_S), LCTL_T(KC_D), LGUI_T(KC_F), KC_G,       KC_H, RGUI_T(KC_J), RCTL_T(KC_K), RSFT_T(KC_L), LALT_T(KC_SCLN), KC_QUOT,
+        LT(_MEDIA, CW_TOGG),KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,       KC_N, KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_DEL,
+                                                              KC_MEH, KC_SPC, TG(_MOUSE),       TG(_VIM), LT(_NUM, KC_ENT), RALT_T(KC_BSPC)
     ),
 
     [_NUM] = LAYOUT_split_3x6_3(
-        // add here hmr
-        // add here caps lock maybe
-        // also caps word???
-        KC_GRV,     KC_1,   KC_2,   KC_3,       KC_4,       KC_5,                           KC_6,   KC_7,       KC_8,       KC_9,   KC_0,   KC_NO,
-        KC_NO,    LPAR_HMR,  RPAR_HMR,  KC_MINS,    KC_EQL,     KC_NO,                          KC_NO,  KC_LBRC,    KC_RBRC,    KC_NO,  KC_F10, KC_F11,
-        KC_LSFT,    KC_F1,  KC_F2,  KC_F3,      KC_F4,      KC_F5,                          KC_F6,  KC_F7,      KC_F8,      KC_F9,  KC_F12, KC_RSFT,
-                                        KC_LGUI,    CW_TOGG,    KC_LCTL,        KC_NO,  KC_NO,   KC_TRNS
+        KC_GRV,     KC_1,       KC_2,       KC_3,               KC_4,           KC_5,           KC_6,   KC_7,               KC_8,               KC_9,       KC_0,       KC_NO,
+        KC_TAB,     KC_LALT,    KC_LSFT,    LCTL_T(KC_MINS),    LGUI_T(KC_EQL), KC_NO,          KC_NO,  RGUI_T(KC_LBRC),    RCTL_T(KC_RBRC),    LPAR_HMR,   RPAR_HMR,   KC_F12,
+        CW_TOGG,    KC_F1,      KC_F2,      KC_F3,              KC_F4,          KC_F5,          KC_F6,  KC_F7,              KC_F8,              KC_F9,      KC_F10,     KC_F11,
+                                                              MEH_CLEAR, KC_NO, KC_NO,          KC_NO, KC_TRNS, KC_NO
     ),
 
+
+
+
+
+
+
+
+
+
+    // TODO add hrm at least on the left half
+    // can i rewrite it to sth like
+    // press shift and a to get sth like home and then MEH_CLEAR
     [_VIM] = LAYOUT_split_3x6_3(
         KC_ESC,     KC_NO,  KC_NO,      C(KC_RGHT), KC_NO,  REDO,                       C(KC_C),    C(KC_Z),    KC_NO,      KC_NO,      C(KC_V),    KC_NO,
         KC_LALT,    KC_NO,  KC_NO,      KC_DEL,     KC_NO,  KC_NO,                      KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    KC_NO,      KC_RALT,
         KC_LSFT,    KC_NO,  C(KC_X),    KC_NO,      KC_NO,  C(KC_LEFT),                 KC_HOME,    KC_PGDN,    KC_PGUP,    KC_END,     C(KC_F),    KC_RSFT,
-                                            KC_LGUI,    KC_SPC,     KC_LCTL,        KC_NO,  KC_TRNS,    KC_NO
+                                            MEH_CLEAR,    KC_SPC,     KC_LCTL,        KC_NO,  KC_TRNS,    KC_NO
     ),
 
+
+    // TODO add hrm
     [_MEDIA] = LAYOUT_split_3x6_3(
         KC_NO,      KC_NO,  KC_NO,      KC_MPRV,    KC_MNXT,    KC_MPLY,                KC_APP,     KC_NO,      KC_NO,      KC_NO,      KC_PSCR,    KC_PWR,
         KC_LALT,    KC_NO,  KC_MUTE,    KC_VOLD,    KC_VOLU,    KC_F20,                 MS_LEFT,    MS_DOWN,    MS_UP,      MS_RGHT,    TG(_GAME),  TG(_FG),
-        KC_LSFT,    KC_NO,  KC_NO,      KC_BRID,    KC_BRIU,    KC_NO,                  MS_WHLL,    MS_WHLD,    MS_WHLU,    MS_WHLR,    KC_NO,      KC_RSFT,
+        KC_TRNS,    KC_NO,  KC_NO,      KC_BRID,    KC_BRIU,    KC_NO,                  MS_WHLL,    MS_WHLD,    MS_WHLU,    MS_WHLR,    KC_NO,      KC_RSFT,
                                             KC_LGUI,   KC_TRNS,     KC_LCTL,        MS_BTN3,   MS_BTN1,  MS_BTN2
     ),
 
+    // TODO add hrm
+    [_MOUSE] = LAYOUT_split_3x6_3(
+        KC_NO,      KC_NO,  KC_NO,      KC_MPRV,    KC_MNXT,    KC_MPLY,                KC_APP,     KC_NO,      KC_NO,      KC_NO,      KC_PSCR,    KC_PWR,
+        KC_LALT,    KC_NO,  KC_MUTE,    KC_VOLD,    KC_VOLU,    KC_F20,                 MS_LEFT,    MS_DOWN,    MS_UP,      MS_RGHT,    TG(_GAME),  TG(_FG),
+        KC_LSFT,    KC_NO,  KC_NO,      KC_BRID,    KC_BRIU,    KC_NO,                  MS_WHLL,    MS_WHLD,    MS_WHLU,    MS_WHLR,    KC_NO,      KC_RSFT,
+                                            MEH_CLEAR,   KC_TRNS,     KC_TRNS,        MS_BTN3,   MS_BTN1,  MS_BTN2
+    ),
+
+    // normie layer and game should be seperate????
+    // zmienic tutaj te controle taby i spacje na cos inszego chyba
     [_GAME] = LAYOUT_split_3x6_3(
         KC_ESC,     KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,                               KC_Y,   KC_U,   KC_I,       KC_O,    KC_P,      KC_BSLS,
         KC_LCTL,    KC_A,   KC_S,   KC_D,   KC_F,   KC_G,                               KC_H,   KC_J,   KC_K,       KC_L,    KC_SCLN,   KC_ENT,
