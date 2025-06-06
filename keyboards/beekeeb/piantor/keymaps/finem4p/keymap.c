@@ -33,11 +33,13 @@ enum custom_keycodes {
     LPAR_HMR,
     RPAR_HMR,
     MEH_CLEAR,
+    MEDIA_LT,
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     static uint16_t lpar_hmr_timer;
     static uint16_t rpar_hmr_timer;
+    static uint16_t media_timer;
 
     switch (keycode) {
         case REDO:
@@ -55,10 +57,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
             }
             else {
-                if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
-                    tap_code(KC_9);
-                }
                 unregister_code(KC_RSFT);
+                if (timer_elapsed(lpar_hmr_timer) < TAPPING_TERM) {
+                    tap_code16(S(KC_9));
+                }
             }
             return false;
 
@@ -82,6 +84,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
 
+        case MEDIA_LT:
+            if(record->event.pressed) {
+                media_timer = timer_read();
+                layer_move(_MEDIA);
+            }
+            else {
+                layer_move(_BASE);
+                if (timer_elapsed(media_timer) < TAPPING_TERM) {
+                    caps_word_on();
+                }
+            }
+            return false;
     }
     return true;
 };
@@ -95,48 +109,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /*                    KC_NO, KC_NO, KC_NO,        KC_NO, KC_NO, KC_NO*/
     /*),*/
 
-    // TODO should i do double tap to get to vim layer???
     [_BASE] = LAYOUT_split_3x6_3(
-        KC_ESC,             KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,       KC_Y, KC_U,         KC_I,         KC_O,         KC_P,            KC_BSLS,
-        KC_TAB,             LALT_T(KC_A), LSFT_T(KC_S), LCTL_T(KC_D), LGUI_T(KC_F), KC_G,       KC_H, RGUI_T(KC_J), RCTL_T(KC_K), RSFT_T(KC_L), LALT_T(KC_SCLN), KC_QUOT,
-        LT(_MEDIA, CW_TOGG),KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,       KC_N, KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_DEL,
-                                                              KC_MEH, KC_SPC, TG(_MOUSE),       TG(_VIM), LT(_NUM, KC_ENT), RALT_T(KC_BSPC)
+        KC_ESC,     KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,       KC_Y, KC_U,         KC_I,         KC_O,         KC_P,            KC_BSLS,
+        KC_TAB,     LALT_T(KC_A), LSFT_T(KC_S), LCTL_T(KC_D), LGUI_T(KC_F), KC_G,       KC_H, RGUI_T(KC_J), RCTL_T(KC_K), RSFT_T(KC_L), LALT_T(KC_SCLN), KC_QUOT,
+        MEDIA_LT,   KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,       KC_N, KC_M,         KC_COMM,      KC_DOT,       KC_SLSH,         KC_DEL,
+                                                      KC_MEH, KC_SPC, TG(_MOUSE),       TG(_VIM), LT(_NUM, KC_ENT), RALT_T(KC_BSPC)
     ),
 
+    // TODO h i g jako @ i *
     [_NUM] = LAYOUT_split_3x6_3(
-        KC_GRV,     KC_1,       KC_2,       KC_3,               KC_4,           KC_5,           KC_6,   KC_7,               KC_8,               KC_9,       KC_0,       KC_NO,
-        KC_TAB,     KC_LALT,    KC_LSFT,    LCTL_T(KC_MINS),    LGUI_T(KC_EQL), KC_NO,          KC_NO,  RGUI_T(KC_LBRC),    RCTL_T(KC_RBRC),    LPAR_HMR,   RPAR_HMR,   KC_F12,
-        CW_TOGG,    KC_F1,      KC_F2,      KC_F3,              KC_F4,          KC_F5,          KC_F6,  KC_F7,              KC_F8,              KC_F9,      KC_F10,     KC_F11,
-                                                              MEH_CLEAR, KC_NO, KC_NO,          KC_NO, KC_TRNS, KC_NO
+        KC_GRV,     KC_1,    KC_2,    KC_3,            KC_4,           KC_5,            KC_6,    KC_7,            KC_8,            KC_9,     KC_0,     KC_NO,
+        KC_TAB,     KC_LALT, KC_LSFT, LCTL_T(KC_MINS), LGUI_T(KC_EQL), S(KC_2),         S(KC_8), RGUI_T(KC_LBRC), RCTL_T(KC_RBRC), LPAR_HMR, RPAR_HMR, KC_F12,
+        CW_TOGG,    KC_F1,   KC_F2,   KC_F3,           KC_F4,          KC_F5,           KC_F6,   KC_F7,           KC_F8,           KC_F9,    KC_F10,   KC_F11,
+                                                    MEH_CLEAR, KC_SPC, KC_NO,           KC_NO, KC_TRNS, KC_NO
     ),
 
-
-
-
-
-
-
-
-
-
-    // TODO add hrm at least on the left half
-    // can i rewrite it to sth like
-    // press shift and a to get sth like home and then MEH_CLEAR
+    // TODO press shift and a to get sth like end and then MEH_CLEAR aka base layer
+    // shift i do end and meh
+    // ctrl and r to redo instead of singular redo
     [_VIM] = LAYOUT_split_3x6_3(
-        KC_ESC,     KC_NO,  KC_NO,      C(KC_RGHT), KC_NO,  REDO,                       C(KC_C),    C(KC_Z),    KC_NO,      KC_NO,      C(KC_V),    KC_NO,
-        KC_LALT,    KC_NO,  KC_NO,      KC_DEL,     KC_NO,  KC_NO,                      KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    KC_NO,      KC_RALT,
-        KC_LSFT,    KC_NO,  C(KC_X),    KC_NO,      KC_NO,  C(KC_LEFT),                 KC_HOME,    KC_PGDN,    KC_PGUP,    KC_END,     C(KC_F),    KC_RSFT,
-                                            MEH_CLEAR,    KC_SPC,     KC_LCTL,          KC_TRNS, KC_NO,   KC_NO
+        KC_ESC, KC_NO,      KC_NO,      C(KC_RGHT), REDO,       KC_NO,                      C(KC_C),    C(KC_Z),    KC_NO,      KC_NO,      C(KC_V),    KC_NO,
+        KC_TAB, KC_LALT,    KC_LSFT,    KC_LCTL,    KC_LGUI,    KC_NO,                      KC_LEFT,    KC_DOWN,    KC_UP,      KC_RGHT,    KC_NO,      KC_NO,
+        KC_NO,  KC_NO,      C(KC_X),    KC_NO,      KC_NO,      C(KC_LEFT),                 KC_HOME,    KC_PGDN,    KC_PGUP,    KC_END,     C(KC_F),    KC_NO,
+                                             MEH_CLEAR, KC_SPC, KC_NO,                      KC_TRNS, KC_ENT, KC_BSPC
     ),
 
 
-    // TODO add hrm
     [_MEDIA] = LAYOUT_split_3x6_3(
-        KC_NO,      KC_NO,  KC_NO,      KC_MPRV,    KC_MNXT,    KC_MPLY,                KC_APP,     KC_NO,      KC_NO,      KC_NO,      KC_PSCR,    KC_PWR,
-        KC_LALT,    KC_NO,  KC_MUTE,    KC_VOLD,    KC_VOLU,    KC_F20,                 MS_LEFT,    MS_DOWN,    MS_UP,      MS_RGHT,    TG(_GAME),  TG(_FG),
-        KC_TRNS,    KC_NO,  KC_NO,      KC_BRID,    KC_BRIU,    KC_NO,                  MS_WHLL,    MS_WHLD,    MS_WHLU,    MS_WHLR,    KC_NO,      KC_RSFT,
-                                            KC_LGUI,   KC_TRNS,     KC_LCTL,        MS_BTN3,   MS_BTN1,  MS_BTN2
+    KC_NO,   KC_NO, KC_NO,   KC_NO,   KC_NO,   KC_NO,             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+    KC_NO,   KC_NO, KC_MUTE, KC_VOLD, KC_VOLU, KC_F20,             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+    KC_TRNS, KC_NO, KC_NO,   KC_MPRV, KC_MNXT, KC_MPLY,             KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
+                        KC_NO, KC_NO, KC_NO,        KC_NO, KC_NO, KC_NO
     ),
+
+
+
+    // [_MEDIA] = LAYOUT_split_3x6_3(
+    //     KC_NO,      KC_NO,  KC_NO,      KC_MPRV,    KC_MNXT,    KC_MPLY,                KC_APP,     KC_NO,      KC_NO,      KC_NO,      KC_PSCR,    KC_PWR,
+    //     KC_LALT,    KC_NO,  KC_MUTE,    KC_VOLD,    KC_VOLU,    KC_F20,                 MS_LEFT,    MS_DOWN,    MS_UP,      MS_RGHT,    TG(_GAME),  TG(_FG),
+    //     KC_TRNS,    KC_NO,  KC_NO,      KC_BRID,    KC_BRIU,    KC_NO,                  MS_WHLL,    MS_WHLD,    MS_WHLU,    MS_WHLR,    KC_NO,      KC_RSFT,
+    //                                         KC_LGUI,   KC_TRNS,     KC_LCTL,        MS_BTN3,   MS_BTN1,  MS_BTN2
+    // ),
 
     // TODO add hrm
     [_MOUSE] = LAYOUT_split_3x6_3(
