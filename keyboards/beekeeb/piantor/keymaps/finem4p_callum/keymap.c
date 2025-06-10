@@ -58,56 +58,6 @@ enum custom_keycodes {
     LT_MDIA,
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // static uint16_t media_timer;
-
-    update_oneshot(
-        &os_shft_state, KC_LSFT, OS_SHFT,
-        keycode, record
-    );
-    update_oneshot(
-        &os_ctrl_state, KC_LCTL, OS_CTRL,
-        keycode, record
-    );
-    update_oneshot(
-        &os_alt_state, KC_LALT, OS_ALT,
-        keycode, record
-    );
-    update_oneshot(
-        &os_cmd_state, KC_LCMD, OS_GUI,
-        keycode, record
-    );
-
-    switch (keycode) {
-        case REDO:
-            if (record->event.pressed) {
-                SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_Z)SS_UP(X_LSFT)SS_UP(X_LCTL));
-            } else {
-            }
-            return false;
-
-        case MEH_CLR:
-            if (record->event.pressed) {
-                layer_move(BASE);
-            } else {
-            }
-            return false;
-
-        // case LT_MDIA:
-        //     if(record->event.pressed) {
-        //         media_timer = timer_read();
-        //         layer_move(_MEDIA);
-        //     }
-        //     else {
-        //         layer_move(_BASE);
-        //         if (timer_elapsed(media_timer) < TAPPING_TERM) {
-        //             caps_word_on();
-        //         }
-        //     }
-        //     return false;
-    }
-    return true;
-};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -261,6 +211,56 @@ oneshot_state os_ctrl_state = os_up_unqueued;
 oneshot_state os_alt_state = os_up_unqueued;
 oneshot_state os_cmd_state = os_up_unqueued;
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    // static uint16_t media_timer;
+
+    update_oneshot(
+        &os_shft_state, KC_LSFT, OS_SHFT,
+        keycode, record
+    );
+    update_oneshot(
+        &os_ctrl_state, KC_LCTL, OS_CTRL,
+        keycode, record
+    );
+    update_oneshot(
+        &os_alt_state, KC_LALT, OS_ALT,
+        keycode, record
+    );
+    update_oneshot(
+        &os_cmd_state, KC_LCMD, OS_GUI,
+        keycode, record
+    );
+
+    switch (keycode) {
+        case REDO:
+            if (record->event.pressed) {
+                SEND_STRING(SS_DOWN(X_LCTL)SS_DOWN(X_LSFT)SS_TAP(X_Z)SS_UP(X_LSFT)SS_UP(X_LCTL));
+            } else {
+            }
+            return false;
+
+        case MEH_CLR:
+            if (record->event.pressed) {
+                layer_move(BASE);
+            } else {
+            }
+            return false;
+
+        // case LT_MDIA:
+        //     if(record->event.pressed) {
+        //         media_timer = timer_read();
+        //         layer_move(_MEDIA);
+        //     }
+        //     else {
+        //         layer_move(_BASE);
+        //         if (timer_elapsed(media_timer) < TAPPING_TERM) {
+        //             caps_word_on();
+        //         }
+        //     }
+        //     return false;
+    }
+    return true;
+};
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     return update_tri_layer_state(state, SYM, NAV, NUM);
