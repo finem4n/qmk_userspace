@@ -59,7 +59,7 @@ enum custom_keycodes {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    static uint16_t media_timer;
+    // static uint16_t media_timer;
 
     switch (keycode) {
         case REDO:
@@ -117,21 +117,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [SYM] = LAYOUT_split_3x6_3(
      KC_NO,   KC_ESC,  KC_LBRC, KC_LCBR, KC_LPRN, KC_TILD, KC_CIRC, KC_RPRN, KC_RCBR, KC_RBRC, KC_GRV, KC_NO,
-     KC_NO,   KC_MINS, KC_ASTR, KC_EQL,  KC_UNDS, KC_DLR,  KC_HASH, OS_CMD,  OS_ALT,  OS_CTRL, OS_SHFT,KC_NO,
+     KC_NO,   KC_MINS, KC_ASTR, KC_EQL,  KC_UNDS, KC_DLR,  KC_HASH, OS_GUI,  OS_ALT,  OS_CTRL, OS_SHFT,KC_NO,
      KC_NO,   KC_PLUS, KC_PIPE, KC_AT,   KC_SLSH, KC_PERC, XXXXXXX, KC_BSLS, KC_AMPR, KC_QUES, KC_EXLM,KC_NO,
                                          KC_NO,_______, _______, _______, _______, KC_NO
     ),
 
     [NAV] = LAYOUT_split_3x6_3(
-     KC_NO,   KC_TAB,  KC_NO,  TAB_L,   TAB_R,   KC_VOLU, RESET,   HOME,    KC_UP,   END,     KC_DEL, KC_NO,
-     KC_NO,   OS_SHFT, OS_CTRL, OS_ALT,  OS_CMD,  KC_VOLD, KC_CAPS, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC,KC_NO,
+     KC_NO,   KC_TAB,  KC_NO,  TAB_L,   TAB_R,   KC_VOLU, KC_NO,   HOME,    KC_UP,   END,     KC_DEL, KC_NO,
+     KC_NO,   OS_SHFT, OS_CTRL, OS_ALT,  OS_GUI,  KC_VOLD, KC_CAPS, KC_LEFT, KC_DOWN, KC_RGHT, KC_BSPC,KC_NO,
      KC_NO,   SPACE_L, SPACE_R, BACK,    FWD,     KC_MPLY, XXXXXXX, KC_PGDN, KC_PGUP, KC_NO, KC_ENT, KC_NO,
                                          KC_NO,_______, _______, _______, _______, KC_NO
     ),
 
     [NUM] = LAYOUT_split_3x6_3(
      KC_NO,   KC_7,    KC_5,    KC_3,    KC_1,    KC_9,    KC_8,    KC_0,    KC_2,    KC_4,    KC_6,    KC_NO,
-     KC_NO,   OS_SHFT, OS_CTRL, OS_ALT,  OS_CMD,  KC_F11,  KC_F10,  OS_CMD,  OS_ALT,  OS_CTRL, OS_SHFT, KC_NO,
+     KC_NO,   OS_SHFT, OS_CTRL, OS_ALT,  OS_GUI,  KC_F11,  KC_F10,  OS_GUI,  OS_ALT,  OS_CTRL, OS_SHFT, KC_NO,
      KC_NO,   KC_F7,   KC_F5,   KC_F3,   KC_F1,   KC_F9,   KC_F8,   KC_F12,  KC_F2,   KC_F4,   KC_F6,   KC_NO,
                                          KC_NO,_______, _______, _______, _______, KC_NO
     ),
@@ -232,7 +232,7 @@ bool is_oneshot_ignored_key(uint16_t keycode) {
     case OS_SHFT:
     case OS_CTRL:
     case OS_ALT:
-    case OS_CMD:
+    case OS_GUI:
         return true;
     default:
         return false;
@@ -258,7 +258,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         keycode, record
     );
     update_oneshot(
-        &os_cmd_state, KC_LCMD, OS_CMD,
+        &os_cmd_state, KC_LCMD, OS_GUI,
         keycode, record
     );
 
