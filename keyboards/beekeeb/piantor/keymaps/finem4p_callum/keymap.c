@@ -71,23 +71,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         case MEH_CLR:
             if (record->event.pressed) {
-                layer_move(_BASE);
+                layer_move(BASE);
             } else {
             }
             return false;
 
-        case LT_MDIA:
-            if(record->event.pressed) {
-                media_timer = timer_read();
-                layer_move(_MEDIA);
-            }
-            else {
-                layer_move(_BASE);
-                if (timer_elapsed(media_timer) < TAPPING_TERM) {
-                    caps_word_on();
-                }
-            }
-            return false;
+        // case LT_MDIA:
+        //     if(record->event.pressed) {
+        //         media_timer = timer_read();
+        //         layer_move(_MEDIA);
+        //     }
+        //     else {
+        //         layer_move(_BASE);
+        //         if (timer_elapsed(media_timer) < TAPPING_TERM) {
+        //             caps_word_on();
+        //         }
+        //     }
+        //     return false;
     }
     return true;
 };
